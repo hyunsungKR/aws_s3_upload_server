@@ -1,18 +1,28 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask
+from flask_restful import Api
+from flask_jwt_extended import JWTManager
+from config import Config
+from resources.image import FileUploadResource
+from resources.posting import PostingResource
+from resources.rekognition import ObjectDetectionResource, PhotoRekognitionResource
+
+
+
+
 
 app = Flask(__name__)
 
+jwt = JWTManager(app)
 
-@app.route("/")
-def hello_from_root():
-    return jsonify(message='Hello from root!')
+api = Api(app)
+# 경로를 리소스와 연결한다.
+api.add_resource(FileUploadResource,'/upload')
+api.add_resource(ObjectDetectionResource,'/object_detection')
+api.add_resource(PhotoRekognitionResource,'/get_photo_label')
+api.add_resource(PostingResource,'/posting')
 
 
-@app.route("/hello")
-def hello():
-    return jsonify(message='Hello from path!')
 
 
-@app.errorhandler(404)
-def resource_not_found(e):
-    return make_response(jsonify(error='Not found!'), 404)
+if __name__ == '__main__' : 
+    app.run()
